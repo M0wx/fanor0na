@@ -43,14 +43,13 @@ fanor0na/
 
 ### Hébergement
 
-Non hébergé pour le moment.
-
+https://m0wx.github.io/fanor0na/
 ---
 
 ## 3. Guide d'Installation Rapide
 
 ```bash
-git clone <url_du_depot>
+git clone https://github.com/M0wx/fanor0na.git
 cd fanor0na
 start index.html
 ```
