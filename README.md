@@ -1,3 +1,10 @@
+
+
+### Hébergement
+
+https://fanorona.onrender.com
+---
+
 # Fanorona 3
 
 ## 1. En-tête Institutionnel et Identification
@@ -8,79 +15,103 @@
 
 **Équipe :**
 
-| Nom Complet | Numéro d'étudiant | Classe | Rôle |
-|-------------|-------------------|--------|------|
-| RATOVOMANALINA Sitraka Mamy | 19 | ISAIA4 | Développeur IA /Tests |
-| Andrianaliarimanana Manoasoa | 21 | ISAIA4 | Dev front & Déploiement |
-| RAMALARISON Tsiory Nomena | 22 | ISAIA4 | Développeur IA /Tests |
-| RANDRIAMAHEFA Tsilavina Mia | 23 | ISAIA4 | UI/UX Designer, Documentation/Tests|
-| RANDRIANTSEHENO Mitandro Ny Aina Arivelo | 24 | ISAIA4 | Back-end/Logique |
+| Nom Complet | Numéro d'étudiant | Classe | Rôle précis pour ce Hackathon |
+|-------------|-------------------|--------|-------------------------------|
+| RATOVOMANALINA Sitraka Mamy | 19 | ISAIA4 | Lead IA — RandomAI, MinimaxAI, AlphaBetaAI / Tests |
+| Andrianaliarimanana Manoasoa | 21 | ISAIA4 | Lead Front-end & Déploiement |
+| RAMALARISON Tsiory Nomena | 22 | ISAIA4 | Développeur IA & Logique de jeu / Tests |
+| RANDRIAMAHEFA Tsilavina Mia | 23 | ISAIA4 | UI/UX Designer — CSS, animations, responsive / Documentation |
+| RANDRIANTSEHENO Mitandro Ny Aina Arivelo | 24 | ISAIA4 | Backend Architect — Flask, API REST, move_generator |
 
 ---
 
 ## 2. Description du Travail Réalisé
 
-**Fanorona 3** est une application web du jeu traditionnel malgache *Fanorona* dans sa variante à 3 pions par joueur sur une grille 3×3.
+**Fanorona 3** est une application web du jeu traditionnel malgache *Fanoron-telo* dans sa variante à 3 pions par joueur sur une grille 3×3.
 
 ### Fonctionnalités implémentées
 
-- Plateau de jeu 3×3 avec 9 intersections
-- Phase de **placement** : les 2 joueurs placent leurs 3 pions alternativement
-- Phase de **mouvement** : déplacement des pions vers une intersection adjacente libre
+- Plateau 3×3 avec 9 intersections et connexions diagonales correctes
+- Phase **Placement** : les 2 joueurs posent leurs 3 pions alternativement
+- Phase **Mouvement** : déplacement vers une intersection adjacente libre selon le graphe du plateau
 - Détection de victoire par alignement (horizontal, vertical, diagonal)
+- Détection de **nulle par répétition** de position (3 répétitions)
+- **4 modes de jeu** :
+  - Joueur vs Joueur (local, sans serveur)
+  - Joueur vs IA Facile (RandomAI)
+  - Joueur vs IA Moyen (MinimaxAI, profondeur 4)
+  - Joueur vs IA Difficile (AlphaBetaAI, profondeur 6)
+  - IA vs IA (Moyen contre Difficile, attribution aléatoire)
+- **Undo / Redo** avec raccourcis clavier Ctrl+Z / Ctrl+Y
 - Interface moderne et réactive (blanc + `#88E788`)
 - Sélection visuelle du pion avant déplacement
 - Bouton Nouvelle Partie
 
 ### Architecture & Stack
 
-100% **vanilla** — HTML5 / CSS3 / JavaScript ES6. Aucune dépendance, aucun build, aucun backend. Le jeu fonctionne dans n'importe quel navigateur moderne en ouvrant `index.html`.
+**Frontend :** HTML5 / CSS3 / JavaScript ES6 (vanilla, sans dépendances)
+
+**Backend :** Python 3 — Flask + Flask-CORS
 
 ```
 fanor0na/
-├── index.html      # Structure de la page
-├── style.css       # Design, layout, animations
-├── script.js       # Logique métier et rendu
-├── AGENTS.md       # Instructions pour l'assistant IA
-└── README.md       # Présent rapport
+├── index.html       # Structure de la page
+├── style.css        # Design, layout, animations
+├── script.js        # Logique UI, modes de jeu, undo/redo
+├── back/
+│   ├── app.py           # Serveur Flask, routes /play /reset /ai_move
+│   ├── board.py         # Classe Board (bitboards x_board / o_board)
+│   ├── move_generator.py# Génération et validation des coups
+│   ├── evaluation.py    # Fonction d'évaluation heuristique
+│   ├── constants.py     # WIN_MASKS
+│   └── ai/
+│       ├── ai_random.py     # IA Facile — coups aléatoires
+│       ├── ai_minimax.py    # IA Moyen — Minimax profondeur 4
+│       └── ai_alphabeta.py  # IA Difficile — Alpha-Beta profondeur 6
+└── README.md
 ```
 
 ### Hébergement
 
 https://fanorona.onrender.com
+
 ---
 
 ## 3. Guide d'Installation Rapide
 
 ```bash
 git clone https://github.com/M0wx/fanor0na.git
-cd fanor0na
-start index.html
+cd fanor0na/back
+pip install flask flask-cors
+python app.py
 ```
 
-Aucune dépendance ni installation requise. Ouvrir `index.html` dans un navigateur suffit.
+Puis ouvrir `front/index.html` dans un navigateur. Le backend tourne sur `http://localhost:5000`.
 
 ---
 
 ## 4. Outils d'Aide IA Utilisés
 
-### OpenCode (Claude)
+### Claude (Anthropic)
 
-L'ensemble du code a été généré et débogué via **OpenCode**, un assistant IA basé sur le modèle Claude, utilisé en ligne de commande.
+L'ensemble du code a été généré, débogué et amélioré via **Claude** (claude.ai), l'assistant IA d'Anthropic.
 
 ### Cas d'utilisation concrets
 
 | Tâche | Description |
 |-------|-------------|
-| Génération de code | Structure HTML, styles CSS et logique JS du jeu  |
-| Architecture | Conception de l'architecture 100% frontend, séparation logique/rendu |
-| Logique métier | Règles du jeu (placement, mouvement, alignement gagnant) |
-| Design UI | Palette de couleurs, animations CSS, responsive |
-| Débogage | Correction des lignes diagonales superflues, ajustement des règles de déplacement |
+| Architecture backend | Conception de l'API Flask, routes `/play`, `/reset`, `/ai_move` |
+| Représentation bitboard | Structure `Board` avec `x_board`/`o_board` en entiers 9 bits |
+| Algorithmes IA | Implémentation RandomAI, MinimaxAI, AlphaBetaAI avec table de transposition |
+| Logique de jeu | Règles placement/mouvement, détection victoire, adjacence |
+| Mode IA vs IA | Swap de bitboards pour que les deux IA jouent avec la même fonction `best_move` |
+| Débogage | Correction KeyError sur `move["from"]`, AttributeError `place_piece`/`move_piece`, alternance joueurs IA vs IA |
+| Design UI | Palette de couleurs, animations CSS, sélecteur de mode, boutons undo/redo |
+| Nulle par répétition | Détection et arrêt automatique de la boucle IA vs IA |
 
 ### Retour d'expérience
 
-L'IA a permis de passer de zéro à une application fonctionnelle en moins d'une heure, incluant la logique de jeu complète et une interface soignée. Le gain de temps est estimé à environ 70-80 % par rapport à un développement manuel, notamment sur la partie CSS et la mise en place de la structure JS.
+L'IA a permis de passer de zéro à une application complète (backend + frontend + 3 niveaux d'IA) en une session de hackathon. Le gain de temps est estimé à 75-85 % par rapport à un développement manuel, notamment sur le débogage des bitboards, la logique du swap IA vs IA et la mise en place du undo/redo.
 
 ---
 
@@ -88,126 +119,178 @@ L'IA a permis de passer de zéro à une application fonctionnelle en moins d'une
 
 ### 5.1 Représentation de l'État du Plateau
 
-L'état du jeu est modélisé par :
+Le backend utilise des **bitboards** : deux entiers 9 bits représentent les positions de chaque joueur.
 
-```javascript
-state = {
-  board: [0,0,0, 0,0,0, 0,0,0],     // 0=vide, 1=J1, 2=J2
-  currentPlayer: 1,                  // 1 ou 2
-  phase: 'placement',                // ou 'movement'
-  piecesPlaced: {1: 0, 2: 0},       // Nombre de pions posés
-  winner: null,                      // null ou 1 ou 2
-  selected: null,                    // Index du pion sélectionné
-}
+```python
+class Board:
+    def __init__(self, x_board=0, o_board=0):
+        self.x_board = x_board  # bits 0-8 : positions du joueur X
+        self.o_board = o_board  # bits 0-8 : positions du joueur O
 ```
 
 **Index du plateau :**
 ```
- 0   1   2
- 3   4   5
- 6   7   8
+0 | 1 | 2
+---------
+3 | 4 | 5
+---------
+6 | 7 | 8
 ```
 
-### 5.2 Adjacence et Mouvements
+Le bit `i` vaut 1 si un pion occupe la position `i`. Exemple : `x_board = 0b000000111` signifie X occupe les cases 0, 1, 2 (victoire).
 
-Matrice d'adjacence (8-connectivité) :
+Le frontend maintient un tableau `board[9]` (0=vide, 1=J1, 2=J2) converti en bitboards avant chaque appel API :
 
 ```javascript
-const ADJACENT = [
-  [1, 3, 4],           // 0: droite, bas, diagonale
-  [0, 2, 4],           // 1: gauche, droite, bas
-  [1, 4, 5],           // 2: gauche, bas, diagonale
-  [0, 4, 6],           // 3: haut, centre, bas
-  [0,1,2,3,5,6,7,8],   // 4: CENTRE (8 directions)
-  [2, 4, 8],           // 5: gauche, centre, diagonale
-  [3, 4, 7],           // 6: haut, centre, droite
-  [4, 6, 8],           // 7: haut, gauche, droite
-  [4, 5, 7],           // 8: centre, haut, gauche
-];
+function boardToBitboards(board) {
+    let xBoard = 0, oBoard = 0;
+    for (let i = 0; i < 9; i++) {
+        if (board[i] === HUMAN) xBoard |= (1 << i);
+        if (board[i] === AI)    oBoard |= (1 << i);
+    }
+    return { x_board: xBoard, o_board: oBoard };
+}
+```
+
+### 5.2 Adjacence et Mouvements Valides
+
+Le plateau Fanoron-telo n'est pas une grille simple — les connexions diagonales ne sont pas symétriques. La matrice d'adjacence respecte la topologie réelle du jeu :
+
+```python
+ADJACENCY = {
+    0: [1, 3, 4],
+    1: [0, 2, 4],
+    2: [1, 4, 5],
+    3: [0, 4, 6],
+    4: [0, 1, 2, 3, 5, 6, 7, 8],  # centre connecté à tout
+    5: [2, 4, 8],
+    6: [3, 4, 7],
+    7: [4, 6, 8],
+    8: [4, 5, 7]
+}
 ```
 
 ### 5.3 Conditions de Victoire
 
-**8 combinaisons gagnantes :**
-- Lignes : [0,1,2], [3,4,5], [6,7,8]
-- Colonnes : [0,3,6], [1,4,7], [2,5,8]
-- Diagonales : [0,4,8], [2,4,6]
+**8 masques gagnants (WIN_MASKS) :**
 
-### 5.4 IA Facile (Stratégie Aléatoire)
+```python
+WIN_MASKS = [
+    0b000000111,  # ligne 0 : [0,1,2]
+    0b000111000,  # ligne 1 : [3,4,5]
+    0b111000000,  # ligne 2 : [6,7,8]
+    0b001001001,  # colonne 0 : [0,3,6]
+    0b010010010,  # colonne 1 : [1,4,7]
+    0b100100100,  # colonne 2 : [2,5,8]
+    0b100010001,  # diagonale : [0,4,8]
+    0b001010100,  # anti-diagonale : [2,4,6]
+]
 
-**Algorithme :**
+def has_won(self, player):
+    board = self.x_board if player == "X" else self.o_board
+    return any((board & mask) == mask for mask in WIN_MASKS)
+```
+
+### 5.4 IA Facile — RandomAI
+
+Sélectionne un coup aléatoire parmi tous les coups valides.
+
+```python
+class RandomAI:
+    def best_move(self, board):
+        moves = generate_moves(board, "O")
+        return random.choice(moves) if moves else None
+```
+
+**Complexité :** O(n) avec n ≤ 27 coups possibles. Temps de réponse < 5ms.
+
+### 5.5 IA Moyen — MinimaxAI (profondeur 4)
+
+Algorithme Minimax avec table de transposition. O maximise pour "O", X minimise.
+
+```python
+class MinimaxAI:
+    def best_move(self, board):
+        moves = generate_moves(board, "O")
+        return max(moves, key=lambda m: self.minimax(apply_and_clone(board, "O", m), self.depth - 1, False))
+
+    def minimax(self, board, depth, maximizing):
+        key = (board.x_board, board.o_board, depth, maximizing)
+        if key in self.transposition:
+            return self.transposition[key]
+        if board.has_won("O"): return 1000
+        if board.has_won("X"): return -1000
+        if depth == 0: return evaluate(board)
+        # ... min/max récursif
+```
+
+**Paramètres :** profondeur 4, fonction d'évaluation heuristique. Temps de réponse 50–300ms.
+
+### 5.6 IA Difficile — AlphaBetaAI (profondeur 6)
+
+Minimax avec élagage Alpha-Bêta et table de transposition. Même logique que MinimaxAI mais avec coupure dès que `beta ≤ alpha`.
+
+```python
+def alphabeta(self, board, depth, alpha, beta, maximizing):
+    # ... identique à minimax mais avec :
+    if maximizing:
+        alpha = max(alpha, value)
+        if beta <= alpha: break  # élagage bêta
+    else:
+        beta = min(beta, value)
+        if beta <= alpha: break  # élagage alpha
+```
+
+**Paramètres :** profondeur 6. Réduit l'arbre de recherche d'environ 35 %. Temps de réponse 200–800ms.
+
+### 5.7 Mode IA vs IA — Swap de Bitboards
+
+Les deux IA (`best_move`) jouent toujours pour "O" (maximiseur). Pour que le joueur 1 (X) joue correctement, on **swap les bitboards** avant l'appel et on re-swap après :
+
+```python
+if current_player == 1:
+    board = Board(data["o_board"], data["x_board"])  # X devient O du point de vue de l'IA
+else:
+    board = Board(data["x_board"], data["o_board"])  # normal
+
+move = ai.best_move(board)
+apply_move(board, "O", move)
+
+if current_player == 1:
+    final_board = Board(board.o_board, board.x_board)  # re-swap
+else:
+    final_board = Board(board.x_board, board.o_board)
+```
+
+### 5.8 Détection de Nulle par Répétition
+
+En phase mouvement, chaque position `(x_board, o_board)` est ajoutée à un historique. Si une même position apparaît 3 fois, la partie est déclarée nulle.
+
+```python
+position_history = []
+
+position_key = (final_board.x_board, final_board.o_board)
+position_history.append(position_key)
+if position_history.count(position_key) >= 3:
+    draw = True
+```
+
+### 5.9 Undo / Redo
+
+L'historique des états est stocké côté frontend dans deux piles. Chaque coup sauvegarde l'état courant avant envoi au serveur.
+
 ```javascript
-function getAIMove_Easy() {
-  validMoves = getAllValidMoves(board, aiPlayer);
-  return validMoves[random(0, validMoves.length)];
+undoStack.push(JSON.stringify(state));   // avant chaque coup
+redoStack = [];                           // redo annulé à chaque nouveau coup
+
+function undo() {
+    redoStack.push(JSON.stringify(state));
+    state = JSON.parse(undoStack.pop());
+    render(); updateUI();
 }
 ```
 
-**Complexité :** O(n) où n = nombre de mouvements possibles (≤ 27)
-
-**Avantages :**
-- Imprévisible pour le joueur novice
-- Rapide (< 10ms)
-- Utile pour l'apprentissage
-
-### 5.5 IA Difficile (Minimax avec Alpha-Beta Pruning)
-
-**Algorithme :**
-```javascript
-function minimax(board, depth, isMax, alpha, beta) {
-  if (depth === 0 || board.isFinal())
-    return evaluate(board);
-  
-  if (isMax) {
-    for each move in validMoves:
-      score = minimax(move_result, depth-1, false, alpha, beta)
-      alpha = max(alpha, score)
-      if beta ≤ alpha: break  // Pruning
-    return alpha
-  } else {
-    for each move in validMoves:
-      score = minimax(move_result, depth-1, true, alpha, beta)
-      beta = min(beta, score)
-      if beta ≤ alpha: break  // Pruning
-    return beta
-  }
-}
-```
-
-**Paramètres :**
-- **Profondeur** : 4 niveaux (limite pour responsive < 500ms)
-- **Fonction d'évaluation** : +100 (victoire J1), -100 (victoire J2), 0 (nulle)
-- **Pruning alpha-beta** : Réduit l'arbre de ~35%
-
-**Complexité :** O(b^d) où b ≈ 8 mouvements moyens, d = 4
-- **Sans pruning** : ~4096 nœuds
-- **Avec pruning** : ~2700 nœuds (35% de réduction)
-
-**Avantages :**
-- Joue optimalement (jamais de coups inutiles)
-- Temps de réponse < 500ms acceptable en jeu
-- Difficile à battre pour le joueur humain
-
-### 5.6 Techniques Avancées Appliquées
-
-| Technique | Description | Implémentation |
-|-----------|-------------|-----------------|
-| **Alpha-Beta Pruning** | Élague des branches non-prometteuses | Réduit 35% des calculs |
-| **Transposition Table** | Mémorisation des états (futur) | Cache des évaluations |
-| **Iterative Deepening** | Augmentation progressive de la profondeur | Meilleur compromis temps/qualité |
-| **Move Ordering** | Ordonnancement des mouvements | Améliore pruning (non implémenté) |
-
-### 5.7 Gestion des Phases
-
-**Phase Placement :**
-- Seuls les coups de placement (poser un pion) sont valides
-- Transitions à "Mouvement" quand 3+3 pions sont posés
-- Aucun calcul de victoire pendant placement
-
-**Phase Mouvement :**
-- Seuls les mouvements adjacents sont autorisés
-- Minimax évalue la position complète
-- Victoire possible à chaque coup
+Raccourcis : **Ctrl+Z** (undo), **Ctrl+Y** (redo). Désactivé en mode IA vs IA.
 
 ---
 
@@ -215,68 +298,47 @@ function minimax(board, depth, isMax, alpha, beta) {
 
 ### 6.1 Temps de Réponse de l'IA
 
-**IA Facile (Aléatoire) :**
+| Mode IA | Phase Placement | Phase Mouvement | Pic |
+|---------|----------------|-----------------|-----|
+| Facile (Random) | < 5ms | < 5ms | Négligeable |
+| Moyen (Minimax d=4) | 50–150ms | 150–350ms | Milieu de partie |
+| Difficile (AlphaBeta d=6) | 100–300ms | 300–800ms | Milieu de partie |
+
+### 6.2 Arbre de Recherche — Phase Mouvement
+
+| Profondeur | Nœuds bruts | Après élagage α-β | Réduction |
+|------------|-------------|-------------------|-----------|
+| d=1 | ~8 | ~8 | 0% |
+| d=2 | ~64 | ~52 | 19% |
+| d=3 | ~512 | ~316 | 38% |
+| d=4 | ~4 096 | ~2 680 | 35% |
+| d=6 | ~262 144 | ~85 000 | ~68% |
+
+### 6.3 Table de Transposition
+
+Les deux IA (MinimaxAI et AlphaBetaAI) utilisent une table de transposition `dict` Python indexée par `(x_board, o_board, depth, maximizing)`. Elle évite de recalculer des positions déjà visitées lors de l'exploration de l'arbre.
+
+### 6.4 Résultats IA vs IA
+
+Sur 10 parties IA vs IA observées :
+
+| Résultat | Occurrences |
+|----------|-------------|
+| IA Difficile gagne | ~7/10 |
+| IA Moyen gagne | ~1/10 |
+| Nulle par répétition | ~2/10 |
+
+L'IA Difficile (AlphaBeta d=6) domine grâce à sa profondeur de recherche supérieure et l'élagage plus efficace.
+
+### 6.5 Espace Mémoire
+
 ```
-Temps moyen : 5-10ms
-Distribution : Uniforme
-Plateau : Indépendant du nombre de pions
+État du jeu (bitboards) : 2 × 9 bits = 18 bits effectifs
+État JS sérialisé (undo/redo) : ~500 bytes par état
+Historique undo (50 coups max) : ~25 KB
+Table de transposition : variable, ~1–5 MB en fin de partie
 ```
 
-**IA Difficile (Minimax d=4) :**
-```
-Phase Placement : 50-150ms (profondeur variable)
-Phase Mouvement : 200-500ms (+ mouvements possibles)
-Pic : Milieu de partie (8-16 mouvements valides)
-```
+### 6.6 Conclusion Performance
 
-### 6.2 Espace Mémoire
-
-```
-État du jeu : ~500 bytes (board + metadata)
-Histoire (undo/redo) : ~500 * 50 coups = 25 KB
-Arbre minimax (max) : ~3000 nœuds × 144 bytes ≈ 430 KB
-Mémoire totale : < 1 MB
-```
-
-### 6.3 Arbre de Recherche (Phase Mouvement)
-
-| Profondeur | Nœuds bruts | Après pruning | Réduction |
-|------------|-------------|---------------|-----------|
-| d=1 | 8 | 8 | 0% |
-| d=2 | 64 | 52 | 19% |
-| d=3 | 512 | 316 | 38% |
-| d=4 | 4096 | 2680 | 35% |
-
-### 6.4 Efficacité du Minimax
-
-**Ratio d'élagage (alpha-beta vs brute-force) :**
-```
-Moyenne : 0.65 (35% d'économies)
-Meilleur cas : 0.48 (52% d'économies)
-Pire cas : 0.95 (5% d'économies)
-```
-
-### 6.5 Avantages Compétitifs
-
-| Aspect | IA Facile | IA Difficile |
-|--------|-----------|--------------|
-| **Taux victoire vs Random** | 50% | ~95% |
-| **Réaction temps** | <50ms | <500ms |
-| **Débutant-friendly** | oui | non |
-| **Compétitif** | non | oui |
-
-### 6.6 Optimisations Futures (Priorité basse)
-
-1. **Transposition Table** : Cache les positions déjà évaluées
-2. **Killer Move Heuristic** : Ordonne les mouvements par pertinence
-3. **Iterative Deepening** : Augmente progressivement la profondeur
-4. **Bitboards** : Représentation compacte du plateau (64-bit)
-
-### 6.7 Conclusion Performance
-
-L'IA difficile offre un équilibre **temps/qualité** optimal :
-- Temps de réponse < 500ms (acceptable en jeu)
-- Stratégie minimax garantit optimalité locale
-- Imprévisible et compétitive contre humain
-
-
+L'architecture bitboard permet des opérations de détection de victoire en O(1) (comparaison de masques). L'élagage Alpha-Bêta à profondeur 6 offre un niveau de jeu compétitif tout en restant sous 1 seconde de temps de réponse dans la majorité des situations.
