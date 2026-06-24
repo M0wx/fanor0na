@@ -69,7 +69,7 @@ L'ensemble du code a été généré et débogué via **OpenCode**, un assistant
 
 | Tâche | Description |
 |-------|-------------|
-| Génération de code | Structure HTML, styles CSS et logique JS du jeu complet |
+| Génération de code | Structure HTML, styles CSS et logique JS du jeu  |
 | Architecture | Conception de l'architecture 100% frontend, séparation logique/rendu |
 | Logique métier | Règles du jeu (placement, mouvement, alignement gagnant) |
 | Design UI | Palette de couleurs, animations CSS, responsive |

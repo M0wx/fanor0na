@@ -127,6 +127,20 @@ function updateUI() {
   document.getElementById('undoBtn').disabled = historyIndex <= 0;
   document.getElementById('redoBtn').disabled = historyIndex >= history.length - 1;
 
+  // Win overlay
+  const overlay = document.getElementById('winOverlay');
+  const winText = document.getElementById('winText');
+  const winTrophy = document.getElementById('winTrophy');
+  if (state.winner) {
+    overlay.classList.add('active');
+    const name = 'Joueur ' + state.winner;
+    winText.textContent = name + ' a gagné !';
+    winText.className = 'win-text ' + (state.winner === P1 ? 'p1-win' : 'p2-win');
+    winTrophy.className = 'win-trophy ' + (state.winner === P1 ? 'p1' : 'p2');
+  } else {
+    overlay.classList.remove('active');
+  }
+
   // Auto-play AI move
   if (!state.winner) {
     if (isAIMode) {
@@ -452,6 +466,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Reset button (back to menu)
   document.getElementById('resetBtn').addEventListener('click', goToMenu);
+
+  // Win overlay restart button
+  document.getElementById('winRestartBtn').addEventListener('click', () => {
+    if (gameMode) startGame(gameMode);
+  });
 
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
