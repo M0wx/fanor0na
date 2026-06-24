@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+import os
 
 from board import Board
 from move_generator import apply_move
@@ -8,12 +9,27 @@ from ai.ai_random import RandomAI
 from ai.ai_minimax import MinimaxAI
 from ai.ai_alphabeta import AlphaBetaAI
 
-app = Flask(__name__)
+# 1. On définit la racine du projet (un niveau au-dessus du dossier 'back')
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+# 2. On configure Flask avec cette racine
+app = Flask(
+    __name__, 
+    template_folder=ROOT_DIR,      
+    static_folder=ROOT_DIR,        
+    static_url_path=''             
+)
+
 CORS(app)
 
 # Variable globale pour tracker l'historique en mode IA vs IA
 position_history = []
 
+@app.route("/")
+def home():
+    # On cible le dossier parent de "back"
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    return send_from_directory(root_dir, "index.html")
 
 @app.route("/play", methods=["POST"])
 def play():

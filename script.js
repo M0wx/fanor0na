@@ -14,7 +14,7 @@ const POSITIONS = [
     [83.33, 83.33]
 ];
 
-const API_URL = "http://localhost:5000";
+const API_URL = "";
 
 let state = {
     board: Array(9).fill(EMPTY),
@@ -24,6 +24,7 @@ let state = {
     selected: null,
     piecesPlaced: { 1: 0, 2: 0 }
 };
+let isGameOverAlerted = false;
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -112,16 +113,31 @@ function updateUI() {
     const msg = document.getElementById("statusMsg");
 
 if (state.winner || state.draw) {
+    let finalMessage = "";
+
     if (state.draw) {
-        msg.textContent = "Match nul — répétition de position !";
+        finalMessage = "Match nul — répétition de position !";
     } else if (isAivAi()) {
         const winnerDiff = aiVsAiDifficulties[state.winner];
-        msg.textContent = `IA ${winnerDiff === "hard" ? "Difficile" : "Moyen"} a gagné !`;
+        finalMessage = `IA ${winnerDiff === "hard" ? "Difficile" : "Moyen"} a gagné !`;
     } else if (isHvH()) {
-        msg.textContent = state.winner === HUMAN ? "Joueur 1 a gagné !" : "Joueur 2 a gagné !";
+        finalMessage = state.winner === HUMAN ? "Joueur 1 a gagné !" : "Joueur 2 a gagné !";
     } else {
-        msg.textContent = state.winner === HUMAN ? "Vous avez gagné !" : "L'IA a gagné !";
+        finalMessage = state.winner === HUMAN ? "Vous avez gagné !" : "L'IA a gagné !";
     }
+
+    // Met à jour le texte dans l'interface
+    msg.textContent = finalMessage;
+
+if (msg) msg.textContent = finalMessage;
+
+        if (!isGameOverAlerted) {
+            isGameOverAlerted = true;
+            setTimeout(() => {
+                // On passe le message ET le code du vainqueur (state.winner vaut 1, 2 ou null s'il y a draw)
+                showCustomAlert(finalMessage, state.winner); 
+            }, 100);
+        }
     return;
 }
 
@@ -345,6 +361,7 @@ async function handleClick(index) {
 
 async function resetGame() {
     aiVsAiRunning = false;
+    isGameOverAlerted = false; // <-- Réinitialisation ici !
     undoStack = [];
     redoStack = [];
 
@@ -436,4 +453,37 @@ function redo() {
     render();
     updateUI();
     updateUndoRedoButtons();
+}
+// ─── CUSTOM ALERT DIALOG ──────────────────────────────────────
+
+function showCustomAlert(message, winnerCode) {
+    const overlay = document.createElement("div");
+    overlay.className = "custom-alert-overlay";
+
+    const box = document.createElement("div");
+    box.className = "custom-alert-box";
+
+    // Détermination de la couleur selon le vainqueur
+    let themeColor = "#6c757d"; // Gris par défaut (match nul)
+    if (winnerCode === 1) {
+        themeColor = "#2e7d32"; // Vert si Joueur 1 gagne
+    } else if (winnerCode === 2) {
+        themeColor = "#d32f2f"; // Rouge si Joueur 2 gagne
+    }
+
+    // On applique la couleur via la variable CSS
+    box.style.setProperty('--alert-color', themeColor);
+
+    box.innerHTML = `
+        <h2>Fin de la partie</h2>
+        <p>${message}</p>
+        <button class="custom-alert-btn">OK</button>
+    `;
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    box.querySelector(".custom-alert-btn").addEventListener("click", () => {
+        overlay.remove();
+    });
 }
