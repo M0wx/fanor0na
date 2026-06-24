@@ -14,7 +14,8 @@ const POSITIONS = [
     [83.33, 83.33]
 ];
 
-const API_URL = "";
+// Configuration pour le développement local
+const API_URL = "http://localhost:5000";
 
 let state = {
     board: Array(9).fill(EMPTY),
@@ -24,7 +25,8 @@ let state = {
     selected: null,
     piecesPlaced: { 1: 0, 2: 0 }
 };
-let isGameOverAlerted = false;
+
+let isGameOverAlerted = false; 
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -83,73 +85,69 @@ function render() {
     }
 }
 
-// Remplace updateUI() entièrement :
 function updateUI() {
-    document.getElementById("count1").textContent = state.piecesPlaced[1] + "/3";
-    document.getElementById("count2").textContent = state.piecesPlaced[2] + "/3";
+    const count1Elem = document.getElementById("count1");
+    const count2Elem = document.getElementById("count2");
+    const phaseBadge = document.getElementById("phaseBadge");
+    const player2Name = document.getElementById("player2Name");
+    const p1NameElem = document.querySelector('[data-player="1"] .player-name');
+    const msg = document.getElementById("statusMsg");
 
-    document.getElementById("phaseBadge").textContent =
-        state.phase === "placement" ? "Placement" : "Mouvement";
+    if (count1Elem) count1Elem.textContent = state.piecesPlaced[1] + "/3";
+    if (count2Elem) count2Elem.textContent = state.piecesPlaced[2] + "/3";
+    if (phaseBadge) phaseBadge.textContent = state.phase === "placement" ? "Placement" : "Mouvement";
 
     if (isAivAi()) {
         const d1 = aiVsAiDifficulties[1];
         const d2 = aiVsAiDifficulties[2];
-        document.getElementById("player2Name").textContent =
-            "IA " + (d2 === "hard" ? "Difficile" : "Moyen");
-        document.querySelector('[data-player="1"] .player-name').textContent =
-            "IA " + (d1 === "hard" ? "Difficile" : "Moyen");
+        if (player2Name) player2Name.textContent = "IA " + (d2 === "hard" ? "Difficile" : "Moyen");
+        if (p1NameElem) p1NameElem.textContent = "IA " + (d1 === "hard" ? "Difficile" : "Moyen");
     } else {
-        document.getElementById("player2Name").textContent =
-            isHvH() ? "Joueur 2" : "IA";
-        document.querySelector('[data-player="1"] .player-name').textContent =
-            "Joueur 1";
+        if (player2Name) player2Name.textContent = isHvH() ? "Joueur 2" : "IA";
+        if (p1NameElem) p1NameElem.textContent = "Joueur 1";
     }
 
     const p1 = document.querySelector('[data-player="1"]');
     const p2 = document.querySelector('[data-player="2"]');
-    p1.classList.toggle("active", state.currentPlayer === HUMAN && !state.winner);
-    p2.classList.toggle("active", state.currentPlayer === AI && !state.winner);
+    if (p1) p1.classList.toggle("active", state.currentPlayer === HUMAN && !state.winner);
+    if (p2) p2.classList.toggle("active", state.currentPlayer === AI && !state.winner);
 
-    const msg = document.getElementById("statusMsg");
+    if (state.winner || state.draw) {
+        let finalMessage = "";
 
-if (state.winner || state.draw) {
-    let finalMessage = "";
+        if (state.draw) {
+            finalMessage = "Match nul — répétition de position !";
+        } else if (isAivAi()) {
+            const winnerDiff = aiVsAiDifficulties[state.winner];
+            finalMessage = `IA ${winnerDiff === "hard" ? "Difficile" : "Moyen"} a gagné !`;
+        } else if (isHvH()) {
+            finalMessage = state.winner === HUMAN ? "Joueur 1 a gagné !" : "Joueur 2 a gagné !";
+        } else {
+            finalMessage = state.winner === HUMAN ? "Vous avez gagné !" : "L'IA a gagné !";
+        }
 
-    if (state.draw) {
-        finalMessage = "Match nul — répétition de position !";
-    } else if (isAivAi()) {
-        const winnerDiff = aiVsAiDifficulties[state.winner];
-        finalMessage = `IA ${winnerDiff === "hard" ? "Difficile" : "Moyen"} a gagné !`;
-    } else if (isHvH()) {
-        finalMessage = state.winner === HUMAN ? "Joueur 1 a gagné !" : "Joueur 2 a gagné !";
-    } else {
-        finalMessage = state.winner === HUMAN ? "Vous avez gagné !" : "L'IA a gagné !";
-    }
-
-    // Met à jour le texte dans l'interface
-    msg.textContent = finalMessage;
-
-if (msg) msg.textContent = finalMessage;
+        if (msg) msg.textContent = finalMessage;
 
         if (!isGameOverAlerted) {
             isGameOverAlerted = true;
             setTimeout(() => {
-                // On passe le message ET le code du vainqueur (state.winner vaut 1, 2 ou null s'il y a draw)
-                showCustomAlert(finalMessage, state.winner); 
+                showCustomAlert(finalMessage, state.winner);
             }, 100);
         }
-    return;
-}
+        return;
+    }
 
-    if (isAivAi()) {
-        const currentDiff = aiVsAiDifficulties[state.currentPlayer];
-        msg.textContent = `IA ${currentDiff === "hard" ? "Difficile" : "Moyen"} réfléchit...`;
-    } else if (isHvH()) {
-        msg.textContent = state.currentPlayer === HUMAN
-            ? "À vous de jouer, Joueur 1"
-            : "À vous de jouer, Joueur 2";
-    } else {
-        msg.textContent = state.currentPlayer === HUMAN ? "À vous de jouer" : "L'IA réfléchit...";
+    if (msg) {
+        if (isAivAi()) {
+            const currentDiff = aiVsAiDifficulties[state.currentPlayer];
+            msg.textContent = `IA ${currentDiff === "hard" ? "Difficile" : "Moyen"} réfléchit...`;
+        } else if (isHvH()) {
+            msg.textContent = state.currentPlayer === HUMAN
+                ? "À vous de jouer, Joueur 1"
+                : "À vous de jouer, Joueur 2";
+        } else {
+            msg.textContent = state.currentPlayer === HUMAN ? "À vous de jouer" : "L'IA réfléchit...";
+        }
     }
 }
 
@@ -170,7 +168,6 @@ function boardToBitboards(board) {
 // ─── HvH local move (pas de serveur) ────────────────────────
 
 function applyLocalMove(move) {
-    // Sauvegarde pour undo
     undoStack.push(JSON.stringify(state));
     redoStack = [];
     updateUndoRedoButtons();
@@ -212,9 +209,9 @@ function applyLocalMove(move) {
 }
 
 const WIN_MASKS = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // lignes
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // colonnes
-    [0, 4, 8], [2, 4, 6]              // diagonales
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
 ];
 
 function checkWinner(board, player) {
@@ -228,7 +225,6 @@ function checkWinner(board, player) {
 async function sendMove(move) {
     const bits = boardToBitboards(state.board);
 
-    // Sauvegarde pour undo avant d'envoyer
     undoStack.push(JSON.stringify(state));
     redoStack = [];
     updateUndoRedoButtons();
@@ -255,7 +251,7 @@ async function sendMove(move) {
 
 // ─── (AI vs AI) ────────────────────────────────────────
 let aiVsAiRunning = false;
-let aiVsAiDifficulties = {};  // { 1: "medium", 2: "hard" } ou inversé
+let aiVsAiDifficulties = {};  
 let undoStack = [];
 let redoStack = [];
 
@@ -266,8 +262,6 @@ function assignAiVsAiDifficulties() {
         2: flip ? "hard" : "medium"
     };
 }
-
-
 
 async function runAiVsAi() {
     if (!isAivAi() || state.winner || state.draw) {
@@ -309,11 +303,8 @@ async function runAiVsAi() {
 
 async function handleClick(index) {
     if (state.winner) return;
-    if (isAivAi()) return;  // ← bloque les clics en mode IA vs IA
+    if (isAivAi()) return;  
 
-
-    // En mode HvH, les deux joueurs sont "HUMAN" et "AI" en alternance
-    // On autorise toujours le clic (pas de blocage sur currentPlayer)
     if (!isHvH() && state.currentPlayer !== HUMAN) return;
 
     if (state.phase === "placement") {
@@ -326,11 +317,9 @@ async function handleClick(index) {
         } else {
             await sendMove(move);
         }
-
         return;
     }
 
-    // Phase mouvement
     if (state.selected === null) {
         if (state.board[index] === state.currentPlayer) {
             state.selected = index;
@@ -361,7 +350,7 @@ async function handleClick(index) {
 
 async function resetGame() {
     aiVsAiRunning = false;
-    isGameOverAlerted = false; // <-- Réinitialisation ici !
+    isGameOverAlerted = false; 
     undoStack = [];
     redoStack = [];
 
@@ -407,35 +396,27 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("redoBtn").addEventListener("click", redo);
     document.getElementById("modeSelect").addEventListener("change", resetGame);
 
-    // Raccourcis clavier
     document.addEventListener("keydown", (e) => {
         if (e.ctrlKey && e.key === "z") undo();
         if (e.ctrlKey && e.key === "y") redo();
     });
 });
 
+// ─── UNDO / REDO ─────────────────────────────────────────────
 
-//_________UNDO           ___________________________________________________
 function updateUndoRedoButtons() {
     const undoBtn = document.getElementById("undoBtn");
     const redoBtn = document.getElementById("redoBtn");
-
-    // Pas de undo/redo en mode IA vs IA
     const allowed = !isAivAi();
 
-    undoBtn.disabled = !allowed || undoStack.length === 0;
-    redoBtn.disabled = !allowed || redoStack.length === 0;
+    if (undoBtn) undoBtn.disabled = !allowed || undoStack.length === 0;
+    if (redoBtn) redoBtn.disabled = !allowed || redoStack.length === 0;
 }
 
 function undo() {
     if (undoStack.length === 0 || isAivAi()) return;
-
-    // Sauvegarde état actuel dans redo
     redoStack.push(JSON.stringify(state));
-
-    // Restaure le dernier état
     state = JSON.parse(undoStack.pop());
-
     render();
     updateUI();
     updateUndoRedoButtons();
@@ -443,17 +424,13 @@ function undo() {
 
 function redo() {
     if (redoStack.length === 0 || isAivAi()) return;
-
-    // Sauvegarde état actuel dans undo
     undoStack.push(JSON.stringify(state));
-
-    // Restaure l'état suivant
     state = JSON.parse(redoStack.pop());
-
     render();
     updateUI();
     updateUndoRedoButtons();
 }
+
 // ─── CUSTOM ALERT DIALOG ──────────────────────────────────────
 
 function showCustomAlert(message, winnerCode) {
@@ -463,21 +440,20 @@ function showCustomAlert(message, winnerCode) {
     const box = document.createElement("div");
     box.className = "custom-alert-box";
 
-    // Détermination de la couleur selon le vainqueur
-    let themeColor = "#6c757d"; // Gris par défaut (match nul)
+    // Choix dynamique de la couleur claire
+    let themeColor = "#6c757d"; // Gris par défaut
     if (winnerCode === 1) {
         themeColor = "#2e7d32"; // Vert si Joueur 1 gagne
     } else if (winnerCode === 2) {
         themeColor = "#d32f2f"; // Rouge si Joueur 2 gagne
     }
 
-    // On applique la couleur via la variable CSS
     box.style.setProperty('--alert-color', themeColor);
 
     box.innerHTML = `
         <h2>Fin de la partie</h2>
         <p>${message}</p>
-        <button class="custom-alert-btn">OK</button>
+        <button class="custom-alert-btn">Nouvelle partie</button>
     `;
 
     overlay.appendChild(box);
@@ -485,5 +461,6 @@ function showCustomAlert(message, winnerCode) {
 
     box.querySelector(".custom-alert-btn").addEventListener("click", () => {
         overlay.remove();
+        resetGame(); // Relance automatiquement le plateau de jeu
     });
 }
