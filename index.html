@@ -7,56 +7,93 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="game-container">
-    <header class="game-header">
+  <!-- Menu de sélection de mode -->
+  <div id="modeMenu" class="mode-menu active">
+    <div class="mode-modal">
       <h1>Fanorona <span class="highlight">3</span></h1>
-    </header>
-
-    <div class="game-bar">
-      <div class="player-info active" data-player="1">
-        <span class="player-dot p1"></span>
-        <span class="player-name">Joueur 1</span>
-        <span class="piece-count" id="count1">0/3</span>
+      <p>Sélectionnez le mode de jeu</p>
+      <div class="mode-buttons">
+        <button class="mode-btn hvh-btn" data-mode="hvh">
+          <span class="mode-icon">👥</span>
+          <span class="mode-name">Humain vs Humain</span>
+        </button>
+        <button class="mode-btn hvai-btn" data-mode="hvai-easy">
+          <span class="mode-icon">🤖</span>
+          <span class="mode-name">vs IA Facile</span>
+        </button>
+        <button class="mode-btn hvai-btn" data-mode="hvai-hard">
+          <span class="mode-icon">🧠</span>
+          <span class="mode-name">vs IA Difficile</span>
+        </button>
+        <button class="mode-btn aivai-btn" data-mode="aivai-easy">
+          <span class="mode-icon">🤖🤖</span>
+          <span class="mode-name">IA Facile vs IA Facile</span>
+        </button>
+        <button class="mode-btn aivai-btn" data-mode="aivai-hard">
+          <span class="mode-icon">🧠🧠</span>
+          <span class="mode-name">IA Difficile vs IA Difficile</span>
+        </button>
       </div>
-      <div class="phase-badge" id="phaseBadge">Placement</div>
-      <div class="player-info" data-player="2">
-        <span class="player-dot p2"></span>
-        <span class="player-name">Joueur 2</span>
-        <span class="piece-count" id="count2">0/3</span>
-      </div>
-    </div>
-
-    <div class="board-wrapper">
-      <svg class="board-lines" viewBox="0 0 200 200" >
-        <line x1="33.33" y1="33.33" x2="100" y2="33.33" />
-        <line x1="100" y1="33.33" x2="166.67" y2="33.33" />
-        <line x1="33.33" y1="100" x2="100" y2="100" />
-        <line x1="100" y1="100" x2="166.67" y2="100" />
-        <line x1="33.33" y1="166.67" x2="100" y2="166.67" />
-        <line x1="100" y1="166.67" x2="166.67" y2="166.67" />
-
-        <line x1="33.33" y1="33.33" x2="33.33" y2="100" />
-        <line x1="33.33" y1="100" x2="33.33" y2="166.67" />
-        <line x1="100" y1="33.33" x2="100" y2="100" />
-        <line x1="100" y1="100" x2="100" y2="166.67" />
-        <line x1="166.67" y1="33.33" x2="166.67" y2="100" />
-        <line x1="166.67" y1="100" x2="166.67" y2="166.67" />
-
-        <line x1="33.33" y1="33.33" x2="100" y2="100" />
-        <line x1="100" y1="100" x2="166.67" y2="166.67" />
-        <line x1="166.67" y1="33.33" x2="100" y2="100" />
-        <line x1="100" y1="100" x2="33.33" y2="166.67" />
-
-
-      </svg>
-      <div class="intersections" id="intersections"></div>
-    </div>
-
-    <div class="game-footer">
-      <p class="game-status" id="statusMsg">À vous de jouer, Joueur 1</p>
-      <button class="reset-btn" id="resetBtn">Nouvelle Partie</button>
     </div>
   </div>
+
+  <!-- Plateau de jeu -->
+  <div id="gameBoard" class="game-board-hidden">
+    <div class="game-container">
+      <header class="game-header">
+        <h1>Fanorona <span class="highlight">3</span></h1>
+      </header>
+
+      <div class="game-bar">
+        <div class="player-info active" data-player="1">
+          <span class="player-dot p1"></span>
+          <span class="player-name" id="p1Name">Joueur 1</span>
+          <span class="piece-count" id="count1">0/3</span>
+        </div>
+        <div class="phase-badge" id="phaseBadge">Placement</div>
+        <div class="player-info" data-player="2">
+          <span class="player-dot p2"></span>
+          <span class="player-name" id="p2Name">Joueur 2</span>
+          <span class="piece-count" id="count2">0/3</span>
+        </div>
+      </div>
+
+      <div class="board-wrapper">
+        <svg class="board-lines" viewBox="0 0 200 200" >
+          <line x1="33.33" y1="33.33" x2="100" y2="33.33" />
+          <line x1="100" y1="33.33" x2="166.67" y2="33.33" />
+          <line x1="33.33" y1="100" x2="100" y2="100" />
+          <line x1="100" y1="100" x2="166.67" y2="100" />
+          <line x1="33.33" y1="166.67" x2="100" y2="166.67" />
+          <line x1="100" y1="166.67" x2="166.67" y2="166.67" />
+
+          <line x1="33.33" y1="33.33" x2="33.33" y2="100" />
+          <line x1="33.33" y1="100" x2="33.33" y2="166.67" />
+          <line x1="100" y1="33.33" x2="100" y2="100" />
+          <line x1="100" y1="100" x2="100" y2="166.67" />
+          <line x1="166.67" y1="33.33" x2="166.67" y2="100" />
+          <line x1="166.67" y1="100" x2="166.67" y2="166.67" />
+
+          <line x1="33.33" y1="33.33" x2="100" y2="100" />
+          <line x1="100" y1="100" x2="166.67" y2="166.67" />
+          <line x1="166.67" y1="33.33" x2="100" y2="100" />
+          <line x1="100" y1="100" x2="33.33" y2="166.67" />
+        </svg>
+        <div class="intersections" id="intersections"></div>
+      </div>
+
+      <div class="game-controls">
+        <button class="undo-btn" id="undoBtn" title="Annuler (Ctrl+Z)">↶ Undo</button>
+        <button class="redo-btn" id="redoBtn" title="Rétablir (Ctrl+Y)">↷ Redo</button>
+      </div>
+
+      <div class="game-footer">
+        <p class="game-status" id="statusMsg">À vous de jouer, Joueur 1</p>
+        <button class="reset-btn" id="resetBtn">Retour au Menu</button>
+      </div>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
