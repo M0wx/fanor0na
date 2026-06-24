@@ -12,6 +12,17 @@
       <h1>Fanorona <span class="highlight">3</span></h1>
     </header>
 
+    <div class="mode-selector">
+      <label for="modeSelect">Mode de jeu</label>
+      <select id="modeSelect">
+        <option value="hvh">Joueur vs Joueur</option>
+        <option value="easy">Joueur vs IA — Facile</option>
+        <option value="medium" selected>Joueur vs IA — Moyen</option>
+        <option value="hard">Joueur vs IA — Difficile</option>
+        <option value="aivai">IA vs IA</option>
+      </select>
+    </div>
+
     <div class="game-bar">
       <div class="player-info active" data-player="1">
         <span class="player-dot p1"></span>
@@ -21,41 +32,41 @@
       <div class="phase-badge" id="phaseBadge">Placement</div>
       <div class="player-info" data-player="2">
         <span class="player-dot p2"></span>
-        <span class="player-name">Joueur 2</span>
+        <span class="player-name" id="player2Name">IA</span>
         <span class="piece-count" id="count2">0/3</span>
       </div>
     </div>
 
     <div class="board-wrapper">
-      <svg class="board-lines" viewBox="0 0 200 200" >
+      <svg class="board-lines" viewBox="0 0 200 200">
         <line x1="33.33" y1="33.33" x2="100" y2="33.33" />
         <line x1="100" y1="33.33" x2="166.67" y2="33.33" />
         <line x1="33.33" y1="100" x2="100" y2="100" />
         <line x1="100" y1="100" x2="166.67" y2="100" />
         <line x1="33.33" y1="166.67" x2="100" y2="166.67" />
         <line x1="100" y1="166.67" x2="166.67" y2="166.67" />
-
         <line x1="33.33" y1="33.33" x2="33.33" y2="100" />
         <line x1="33.33" y1="100" x2="33.33" y2="166.67" />
         <line x1="100" y1="33.33" x2="100" y2="100" />
         <line x1="100" y1="100" x2="100" y2="166.67" />
         <line x1="166.67" y1="33.33" x2="166.67" y2="100" />
         <line x1="166.67" y1="100" x2="166.67" y2="166.67" />
-
         <line x1="33.33" y1="33.33" x2="100" y2="100" />
         <line x1="100" y1="100" x2="166.67" y2="166.67" />
         <line x1="166.67" y1="33.33" x2="100" y2="100" />
         <line x1="100" y1="100" x2="33.33" y2="166.67" />
-
-
       </svg>
       <div class="intersections" id="intersections"></div>
     </div>
 
-    <div class="game-footer">
-      <p class="game-status" id="statusMsg">À vous de jouer, Joueur 1</p>
+  <div class="game-footer">
+    <p class="game-status" id="statusMsg">À vous de jouer, Joueur 1</p>
+    <div class="footer-buttons">
+      <button class="icon-btn" id="undoBtn" title="Annuler">↩</button>
       <button class="reset-btn" id="resetBtn">Nouvelle Partie</button>
+      <button class="icon-btn" id="redoBtn" title="Rétablir">↪</button>
     </div>
+  </div>
   </div>
   <script src="script.js"></script>
 </body>
