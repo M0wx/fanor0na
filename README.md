@@ -47,7 +47,7 @@ fanor0na/
 
 ### Hébergement
 
-https://m0wx.github.io/fanor0na/
+https://fanorona.onrender.com
 ---
 
 ## 3. Guide d'Installation Rapide
