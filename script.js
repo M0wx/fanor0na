@@ -32,6 +32,7 @@ let historyIndex = -1;
 let gameMode = null; // 'hvh', 'hvai-easy', 'hvai-hard', 'aivai-easy', 'aivai-hard'
 let aiPlayer = null; // P1 or P2 if AI is enabled
 let isAIMode = false; // true if both players are AI (IA vs IA)
+let aiTimeoutId = null;
 
 function initState() {
   state = {
@@ -51,18 +52,36 @@ function saveState() {
 }
 
 function undo() {
+  if (aiTimeoutId) {
+    clearTimeout(aiTimeoutId);
+    aiTimeoutId = null;
+  }
   if (historyIndex > 0) {
     historyIndex--;
     state = JSON.parse(JSON.stringify(history[historyIndex]));
+    // Skip AI turns in HvAI mode so undo always lands on human's turn
+    if (!isAIMode && state.currentPlayer === aiPlayer && historyIndex > 0) {
+      historyIndex--;
+      state = JSON.parse(JSON.stringify(history[historyIndex]));
+    }
     render();
     updateUI();
   }
 }
 
 function redo() {
+  if (aiTimeoutId) {
+    clearTimeout(aiTimeoutId);
+    aiTimeoutId = null;
+  }
   if (historyIndex < history.length - 1) {
     historyIndex++;
     state = JSON.parse(JSON.stringify(history[historyIndex]));
+    // Skip AI turns in HvAI mode
+    if (!isAIMode && state.currentPlayer === aiPlayer && historyIndex < history.length - 1) {
+      historyIndex++;
+      state = JSON.parse(JSON.stringify(history[historyIndex]));
+    }
     render();
     updateUI();
   }
@@ -142,13 +161,15 @@ function updateUI() {
   }
 
   // Auto-play AI move
+  if (aiTimeoutId) {
+    clearTimeout(aiTimeoutId);
+    aiTimeoutId = null;
+  }
   if (!state.winner) {
     if (isAIMode) {
-      // Both players are AI - always auto-play
-      setTimeout(playAIMove, 500);
+      aiTimeoutId = setTimeout(playAIMove, 500);
     } else if (state.currentPlayer === aiPlayer) {
-      // Single AI player
-      setTimeout(playAIMove, 500);
+      aiTimeoutId = setTimeout(playAIMove, 500);
     }
   }
 }
@@ -427,9 +448,14 @@ function startGame(mode) {
     p2NameEl.textContent = 'IA ' + level;
   }
 
-  // Hide menu, show game
-  document.getElementById('modeMenu').classList.remove('active');
-  document.getElementById('gameBoard').classList.add('active');
+  // Sync select
+  document.getElementById('modeSelect').value = mode;
+
+  // Cancel pending AI
+  if (aiTimeoutId) {
+    clearTimeout(aiTimeoutId);
+    aiTimeoutId = null;
+  }
 
   // Initialize game
   initState();
@@ -441,35 +467,35 @@ function startGame(mode) {
   updateUI();
 }
 
-function goToMenu() {
-  document.getElementById('modeMenu').classList.add('active');
-  document.getElementById('gameBoard').classList.remove('active');
-  gameMode = null;
-  aiPlayer = null;
-  isAIMode = false;
-}
-
 // ============= EVENT LISTENERS =============
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Mode selection buttons
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const mode = btn.dataset.mode;
-      startGame(mode);
-    });
-  });
+  // Mode select dropdown
+  const modeSelect = document.getElementById('modeSelect');
+  modeSelect.addEventListener('change', () => startGame(modeSelect.value));
 
   // Undo/Redo buttons
   document.getElementById('undoBtn').addEventListener('click', undo);
   document.getElementById('redoBtn').addEventListener('click', redo);
 
-  // Reset button (back to menu)
-  document.getElementById('resetBtn').addEventListener('click', goToMenu);
+  // Reset button (restart same mode)
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    startGame(document.getElementById('modeSelect').value);
+  });
 
   // Win overlay restart button
   document.getElementById('winRestartBtn').addEventListener('click', () => {
-    if (gameMode) startGame(gameMode);
+    startGame(document.getElementById('modeSelect').value);
+  });
+
+  // Rules modal
+  const rulesBtn = document.getElementById('rulesBtn');
+  const rulesOverlay = document.getElementById('rulesOverlay');
+  const rulesClose = document.getElementById('rulesClose');
+  rulesBtn.addEventListener('click', () => rulesOverlay.classList.add('active'));
+  rulesClose.addEventListener('click', () => rulesOverlay.classList.remove('active'));
+  rulesOverlay.addEventListener('click', (e) => {
+    if (e.target === rulesOverlay) rulesOverlay.classList.remove('active');
   });
 
   // Keyboard shortcuts
@@ -482,5 +508,8 @@ document.addEventListener('DOMContentLoaded', () => {
       redo();
     }
   });
+
+  // Default game
+  startGame('hvh');
 });
 

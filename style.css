@@ -38,107 +38,29 @@ body {
   padding: 1rem;
 }
 
-/* Mode Menu */
-.mode-menu {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-
-.mode-menu.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.mode-modal {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 2.5rem;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.4s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.mode-modal h1 {
-  font-size: 1.875rem;
+/* Mode Select */
+.game-bar-mode {
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
 }
 
-.mode-modal > p {
-  text-align: center;
-  color: var(--text-light);
-  margin-bottom: 2rem;
-  font-weight: 500;
-}
-
-.mode-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.mode-btn {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
+.mode-select {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface);
+  color: var(--text);
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: all 0.2s;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-.mode-btn:hover {
+.mode-select:hover,
+.mode-select:focus {
   border-color: var(--primary);
-  background: rgba(136, 231, 136, 0.05);
-}
-
-.mode-btn:active {
-  transform: scale(0.98);
-}
-
-.mode-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.mode-name {
-  text-align: left;
-}
-
-/* Board Container */
-.game-board-hidden {
-  display: none;
-}
-
-.game-board-hidden.active {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
 }
 
 .game-container {
@@ -147,7 +69,7 @@ body {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 2rem 2rem 1.5rem;
-  max-width: 480px;
+  max-width: 960px;
   width: 100%;
 }
 
@@ -171,12 +93,13 @@ body {
 /* Barre d'info */
 .game-bar {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.25rem;
   background: var(--bg);
   border-radius: var(--radius-sm);
-  padding: 0.625rem 1rem;
-  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .player-info {
@@ -323,17 +246,6 @@ body {
   }
   100% { 
     transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes slideInPiece {
-  from {
-    transform: scale(0) rotate(-180deg);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1) rotate(0deg);
     opacity: 1;
   }
 }
@@ -520,6 +432,97 @@ body {
 
 .win-text.p2-win {
   color: var(--player2);
+}
+
+/* Rules Button */
+.rules-btn {
+  display: block;
+  margin: 0.75rem auto 0;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+}
+
+.rules-btn:hover {
+  color: var(--primary-dark);
+}
+
+/* Rules Modal */
+.rules-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: var(--radius);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 150;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.rules-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.rules-modal {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.75rem;
+  margin: 1rem;
+  max-width: 380px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  animation: winReveal 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: left;
+}
+
+.rules-modal h2 {
+  font-size: 1.125rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.rules-modal p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-light);
+  margin-bottom: 0.75rem;
+}
+
+.rules-modal p:last-child {
+  margin-bottom: 0;
+}
+
+.rules-modal strong {
+  color: var(--text);
+}
+
+.rules-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  font-size: 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.rules-close:hover {
+  color: var(--text);
 }
 
 /* Responsive */
